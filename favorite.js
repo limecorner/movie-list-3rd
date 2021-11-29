@@ -15,7 +15,7 @@ function renderMoviesCardForm(movies) {
       </div>
       <div class="card-footer text-muted">
         <button class="more btn btn-primary" data-bs-toggle="modal" data-bs-target="#movieModal" data-id="${movie.id}">More</button>
-        <button class="add-to-favorite btn btn-info" data-id="${movie.id}">+</button>
+        <button class="remove-from-favorite btn btn-danger" data-id="${movie.id}">X</button>
       </div>
     </div>`
   })
@@ -46,6 +46,13 @@ movieList.addEventListener('click', e => {
   if (e.target.matches('.more')) {
     const id = e.target.dataset.id
     showMovieModal(id)
+  } else if (e.target.matches('.remove-from-favorite')) {
+    const id = Number(e.target.dataset.id)
+    const index = favoriteMovieList.findIndex(movie => movie.id === id)
+    if (index === -1) return
+    favoriteMovieList.splice(index, 1)
+    renderMoviesCardForm(favoriteMovieList)
+    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
   }
 })
 

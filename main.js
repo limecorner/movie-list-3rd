@@ -17,12 +17,12 @@ function renderMoviesCardForm(movies) {
         <h5 class="card-title">${movie.title}</h5>
       </div>
       <div class="card-footer text-muted">
-        <button class="more btn btn-primary" data-bs-toggle="modal" data-bs-target="#movieModal"  data-id="${movie.id}">More</button>
-        <button class="btn btn-info">+</button>
+        <button class="more btn btn-primary" data-bs-toggle="modal" data-bs-target="#movieModal" data-id="${movie.id}">More</button>
+        <button class="add-to-favorite btn btn-info" data-id="${movie.id}">+</button>
       </div>
     </div>`
-    movieList.innerHTML = rawHTML
   })
+  movieList.innerHTML = rawHTML
 }
 
 function showMovieModal(id) {
@@ -49,11 +49,18 @@ movieList.addEventListener('click', e => {
   if (e.target.matches('.more')) {
     const id = e.target.dataset.id
     showMovieModal(id)
+  } else if (e.target.matches('.add-to-favorite')) {
+    const id = Number(e.target.dataset.id)
+    let favoriteMovieList = JSON.parse(localStorage.getItem('favoriteMovies')) || []
+    if (favoriteMovieList.some(movie => movie.id === id)) return
+    const movie = movies.find(movie => movie.id === id)
+    favoriteMovieList.push(movie)
+    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
   }
 })
 
-searchForm.addEventListener('submit', e => {
-  e.preventDefault()
+searchForm.addEventListener('submit', () => {
+  event.preventDefault()
   const input = document.querySelector('#input')
   const keyword = input.value.toLowerCase().trim()
   const filteredMovies = movies.filter(movie =>
@@ -65,6 +72,8 @@ searchForm.addEventListener('submit', e => {
   renderMoviesCardForm(filteredMovies)
 })
 
+
+
 axios.get(ALL_MOVIES_URL)
   .then(function (response) {
     // handle success
@@ -75,4 +84,3 @@ axios.get(ALL_MOVIES_URL)
     // handle error
     console.log(error);
   })
-

@@ -3,6 +3,10 @@ const ALL_MOVIES_URL = BASE_URL + 'movies'
 const SHOW_MOVIE_URL = BASE_URL + 'movies/'
 const POSTER_URL = 'https://movie-list.alphacamp.io/posters/'
 const movieList = document.querySelector('#movie-list')
+const movies = []
+
+// Search variable
+const searchForm = document.querySelector('#search-form')
 
 function renderMoviesCardForm(movies) {
   let rawHTML = ''
@@ -41,10 +45,30 @@ function showMovieModal(id) {
     })
 }
 
+movieList.addEventListener('click', e => {
+  if (e.target.matches('.more')) {
+    const id = e.target.dataset.id
+    showMovieModal(id)
+  }
+})
+
+searchForm.addEventListener('submit', e => {
+  e.preventDefault()
+  const input = document.querySelector('#input')
+  const keyword = input.value.toLowerCase().trim()
+  const filteredMovies = movies.filter(movie =>
+    movie.title.toLowerCase().includes(keyword)
+  )
+  if (!filteredMovies.length) {
+    return alert(`搜尋不到${keyword}`)
+  }
+  renderMoviesCardForm(filteredMovies)
+})
+
 axios.get(ALL_MOVIES_URL)
   .then(function (response) {
     // handle success
-    const movies = response.data.results
+    movies.push(...response.data.results)
     renderMoviesCardForm(movies)
   })
   .catch(function (error) {
@@ -52,9 +76,3 @@ axios.get(ALL_MOVIES_URL)
     console.log(error);
   })
 
-movieList.addEventListener('click', e => {
-  if (e.target.matches('.more')) {
-    const id = e.target.dataset.id
-    showMovieModal(id)
-  }
-})

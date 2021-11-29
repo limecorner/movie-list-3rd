@@ -22,4 +22,31 @@ function renderMoviesCardForm(movies) {
   movieList.innerHTML = rawHTML
 }
 
+function showMovieModal(id) {
+  const modalTitle = document.querySelector('.modal-title')
+  const moviePoster = document.querySelector('.modal-body img')
+  const movieDescription = document.querySelector('.modal-body #movie-description')
+  const movieReleaseDate = document.querySelector('.modal-body #movie-release-date')
+  axios.get(SHOW_MOVIE_URL + id)
+    .then(function (response) {
+      // handle success
+      const movie = response.data.results
+      modalTitle.innerText = movie.title
+      moviePoster.src = POSTER_URL + movie.image
+      movieReleaseDate.innerText = `release date: ${movie.release_date}`
+      movieDescription.innerText = movie.description
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+}
+
+movieList.addEventListener('click', e => {
+  if (e.target.matches('.more')) {
+    const id = e.target.dataset.id
+    showMovieModal(id)
+  }
+})
+
 renderMoviesCardForm(favoriteMovieList)

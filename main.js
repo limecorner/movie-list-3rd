@@ -5,7 +5,7 @@ const POSTER_URL = 'https://movie-list.alphacamp.io/posters/'
 const movieList = document.querySelector('#movie-list')
 const movies = []
 
-// Search variable
+// Search (variable)
 const searchForm = document.querySelector('#search-form')
 
 function renderMoviesCardForm(movies) {
@@ -45,17 +45,21 @@ function showMovieModal(id) {
     })
 }
 
+function addToFavorite(id) {
+  let favoriteMovieList = JSON.parse(localStorage.getItem('favoriteMovies')) || []
+  if (favoriteMovieList.some(movie => movie.id === id)) return
+  const movie = movies.find(movie => movie.id === id)
+  favoriteMovieList.push(movie)
+  localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
+}
+
 movieList.addEventListener('click', e => {
   if (e.target.matches('.more')) {
     const id = e.target.dataset.id
     showMovieModal(id)
   } else if (e.target.matches('.add-to-favorite')) {
     const id = Number(e.target.dataset.id)
-    let favoriteMovieList = JSON.parse(localStorage.getItem('favoriteMovies')) || []
-    if (favoriteMovieList.some(movie => movie.id === id)) return
-    const movie = movies.find(movie => movie.id === id)
-    favoriteMovieList.push(movie)
-    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
+    addToFavorite(id)
   }
 })
 

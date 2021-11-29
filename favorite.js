@@ -42,17 +42,21 @@ function showMovieModal(id) {
     })
 }
 
+function removeFromFavorite(id) {
+  const index = favoriteMovieList.findIndex(movie => movie.id === id)
+  if (index === -1) return
+  favoriteMovieList.splice(index, 1)
+  renderMoviesCardForm(favoriteMovieList)
+  localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
+}
+
 movieList.addEventListener('click', e => {
   if (e.target.matches('.more')) {
     const id = e.target.dataset.id
     showMovieModal(id)
   } else if (e.target.matches('.remove-from-favorite')) {
     const id = Number(e.target.dataset.id)
-    const index = favoriteMovieList.findIndex(movie => movie.id === id)
-    if (index === -1) return
-    favoriteMovieList.splice(index, 1)
-    renderMoviesCardForm(favoriteMovieList)
-    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovieList))
+    removeFromFavorite(id)
   }
 })
 

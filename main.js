@@ -7,6 +7,10 @@ const movies = []
 
 // Search (variable)
 const searchForm = document.querySelector('#search-form')
+// Pages (variable)
+const MOVIES_PER_PAGE = 12
+const pagination = document.querySelector('.pagination')
+let filteredMovies = []
 
 function renderMoviesCardForm(movies) {
   let rawHTML = ''
@@ -67,22 +71,45 @@ searchForm.addEventListener('submit', () => {
   event.preventDefault()
   const input = document.querySelector('#input')
   const keyword = input.value.toLowerCase().trim()
-  const filteredMovies = movies.filter(movie =>
+  filteredMovies = movies.filter(movie =>
     movie.title.toLowerCase().includes(keyword)
   )
   if (!filteredMovies.length) {
     return alert(`搜尋不到${keyword}`)
   }
-  renderMoviesCardForm(filteredMovies)
+  renderMoviesCardForm(getMoviesByPage(1))
+  renderPages(filteredMovies.length)
 })
 
+function renderPages(numbersOfMovies) {
+  const totalpages = Math.ceil(numbersOfMovies / MOVIES_PER_PAGE)
+  let rawHTML = ''
+  for (let page = 1; page <= totalpages; page++) {
+    rawHTML += `<li class="page-item"><a class="page-link" data-page="${page}" href="#">${page}</a></li>`
+  }
+  pagination.innerHTML = rawHTML
+}
 
+function getMoviesByPage(page) { //render movie統一用
+  const selectedMovies = (filteredMovies.length) ? filteredMovies : movies
+  const start = (page - 1) * 12
+  const moviesByPage = selectedMovies.slice(start, start + MOVIES_PER_PAGE)
+  return moviesByPage
+}
+
+pagination.addEventListener('click', e => {
+  if (e.target.tagName === 'A') {
+    const page = Number(e.target.dataset.page)
+    renderMoviesCardForm(getMoviesByPage(page))
+  }
+})
 
 axios.get(ALL_MOVIES_URL)
   .then(function (response) {
     // handle success
     movies.push(...response.data.results)
-    renderMoviesCardForm(movies)
+    renderMoviesCardForm(getMoviesByPage(1))
+    renderPages(movies.length)
   })
   .catch(function (error) {
     // handle error

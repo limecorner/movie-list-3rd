@@ -27,6 +27,10 @@ function showMovieModal(id) {
   const moviePoster = document.querySelector('.modal-body img')
   const movieDescription = document.querySelector('.modal-body #movie-description')
   const movieReleaseDate = document.querySelector('.modal-body #movie-release-date')
+  modalTitle.innerText = ''
+  moviePoster.src = ''
+  movieReleaseDate.innerText = ''
+  movieDescription.innerText = ''
   axios.get(SHOW_MOVIE_URL + id)
     .then(function (response) {
       // handle success

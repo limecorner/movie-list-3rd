@@ -6,6 +6,7 @@ A simple web application for movie fanatic
 - searching movies by title
 - add movies to your favorite list
 - manage your favorite list
+- change card or list format to list movies
 
 ### Searching
 type the title of the movies in search bar
